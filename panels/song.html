@@ -1,0 +1,155 @@
+<style>
+    .action-btn {
+            margin-top: -38px;
+    }
+    .hidden-btn {
+        display: none;
+    }
+    .hidden-btn-parent:hover .hidden-btn {
+        display: inline;
+    }
+
+    .toolbar {
+        margin-top: -16px;
+        margin-bottom: 20px;
+    }
+    .toolbar button { 
+        border-top-right-radius: 0px;
+        border-top-left-radius: 0px;
+    }
+    textarea {
+        height: 200vh;
+        width: 100%;
+        min-width: 100%;
+    }
+    .center { 
+        text-align: center;
+    }
+    a.center { 
+        white-space:pre;
+        line-height: 0px;
+    }
+    .verse {
+        font-size: 10px;
+    }
+    .browse-songs {
+        border-radius: 10px;
+    }
+button.preview-tip {
+  position: relative;
+  display: inline;
+}
+button.preview-tip span {
+  position: absolute;
+  color: #FFFFFF;
+  background: #000000;
+      max-height: 500px;
+    overflow-y: scroll;    
+    padding: 0px 10px;
+    overflow-x: hidden;
+  text-align: center;
+  visibility: hidden;
+  border-radius: 6px;
+  box-shadow: -2px 3px 10px #363636;
+}
+button.preview-tip span:after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 100%;
+  margin-top: -8px;
+  width: 0; height: 0;
+  border-left: 8px solid #000000;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+button.preview-tip span {
+  visibility: visible;
+  opacity: 0.8;
+  right: 100%;
+  top: 50%;
+  margin-top: -15px;
+  margin-right: 15px;
+  white-space: pre;
+  z-index: 999;
+}
+
+</style>
+
+
+
+<div id="bible-panel" ng-controller="SongPanelController" class="panel panel-default" style="overflow: visible;">
+    <div class="panel-heading">
+        <div class="panel-title">
+            <h4> {{pannelTitle}} </h4>
+        </div>
+    </div>
+    <div class="panel-body" style="overflow: visible;">
+        <div class="toolbar">
+             <button ng-click="changeView('new')"  class="btn btn-default"> New song</button>
+             <button ng-click="changeView('browse')"  class="btn btn-default"> Browse</button>
+        </div>
+        
+        <div  ng-if="browse" class="browse-songs">
+            <input type="text" class="form-control" placeholder="Search" ng-model="keyword" ng-change="findSong(keyword)">
+            <br>
+            <div class="list-group" id="song-list">
+                <!--Song from DB  -->
+                <a type="button" class="list-group-item hidden-btn-parent" ng-repeat="s in songList">
+                    <h4 class="list-group-item-heading"> {{s.title}}</h4>
+                    <p class="list-group-item-text"> by {{s.author}} </p>
+                    <span class="pull-right action-btn hidden-btn">    
+                        <button ng-click="changeView('edit', s)" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>
+                        <button ng-click="changeView('play', s)" class="btn btn-success"><span class="glyphicon glyphicon-play"></span></button>
+                        <button ng-click="deleteSong(s)" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>
+                    </span>
+                </a>
+                <!--Songs from web  API  -->
+                <a type="button" class="list-group-item list-group-item-info hidden-btn-parent" ng-repeat="s in songsFromWeb">
+                    <h4 class="list-group-item-heading"> {{s.title}}</h4>
+                    <p class="list-group-item-text"> by {{s.author}}  </p>
+                    <span class="pull-right action-btn hidden-btn">    
+                        <button ng-click="previewSong(s.link);s.showTooltip=1"  class="btn btn-default preview-tip"><span ng-show="s.showTooltip" >{{ previewedSong }}</span> <i class="glyphicon glyphicon-eye-open"></i> </button>
+                        <button ng-click="addSong(s.title, s.author, s.link)" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+                    </span>
+                </a>
+            </div>
+            
+        </div>
+        <div ng-if="play">
+
+            <div class="list-group" id="song-list">
+                <a type="button" class="list-group-item hidden-btn-parent center" ng-class="active-verse" ng-dblclick="displaySongVerse(v)"  ng-repeat="v in currentSong.verses track by $index ">
+                    <h4 class="list-group-item-heading verse"> {{v}}</h4>
+                    <span class="pull-right action-btn hidden-btn">
+                        <button ng-click="editSongVerse()" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></button>
+                    </span>
+                </a>                    
+            </div>
+        </div>
+        <div ng-if="edit">
+            <input type="text" class="form-control" ng-model="editedSong.title"><br>     
+            <input type="text" class="form-control" ng-model="editedSong.author"><br>             
+            <textarea type="text" rows="20" class="form-control center" ng-model="editedSong.lyrics" > </textarea>
+            <button ng-click="updateSong(editedSong)"  class="btn btn-success btn-block"> Save </button>                
+        </div>
+        <div ng-if="new" ng-init="disabled=true">
+            <input type="text" class="form-control" placeholder="Title" ng-model="newSong.title"><br>     
+            <input type="text" class="form-control" placeholder="Author" ng-model="newSong.author"><br>             
+            <textarea type="text" rows="20" class="form-control center" placeholder="Lyrics..." ng-model="newSong.lyrics" > </textarea>
+            <button ng-click="createSong(newSong)"  class="btn btn-success btn-block" ng-show="newSong.lyrics.length"> Save </button>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('#bible-panel').lobiPanel({
+        reload: false,
+        expand: false,
+        editTitle: false,
+        minWidth: 100,
+        minHeight: 100
+    });
+</script>

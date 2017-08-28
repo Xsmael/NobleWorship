@@ -1,0 +1,33 @@
+<style>
+    .bla {
+        vertical-align: middle;
+        text-align: center;
+    }
+</style>
+<div id="bible-panel" ng-controller="PreviewPanelController" class="panel panel-default">
+    <div class="panel-heading">
+        <div class="panel-title">
+            <h4> {{pannelTitle}} </h4>
+        </div>
+    </div>
+    <div class="panel-body" style="vertical-align: middle;  text-align: center;">
+           <input type="text" class="form-control" placeholder="path" ng-model="bgPath">
+            <br>
+            <div>
+                <div class="row">
+                    
+                </div>
+            </div>     
+    </div>
+</div>
+
+<script>
+
+     $('#bible-panel').lobiPanel({ 
+                    reload: false,
+                    expand: false,
+                    editTitle: false,
+                    minWidth:100,
+                    minHeight:100
+                });
+</script>

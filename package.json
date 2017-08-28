@@ -1,0 +1,18 @@
+{
+  "main": "index.html",
+  "name": "simpleWorship",
+  "window": {
+    "transparent": true,
+    "toolbar": false,
+    "frame": false,
+    "icon": ""
+  },
+  "dependencies": {
+    "faye": "^1.2.4",
+    "line-reader": "^0.4.0",
+    "mongodb": "^2.2.28",
+    "mongoose": "^4.10.7",
+    "noogger": "^0.1.7",
+    "scraperjs": "^1.2.0"
+  }
+}

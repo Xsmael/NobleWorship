@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <link rel="stylesheet" href="libs/css/jquery-ui.min.css"/> 
+        <link rel="stylesheet" href="libs/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="libs/css/lobipanel.min.css"/>
+
+        <script src="libs/js/jquery.1.11.min.js"></script>
+        <script src="libs/js/jquery-ui.min.js"></script>
+        <script src="libs/js/bootstrap.min.js"></script>
+        <script src="js/live.js"></script>
+
+
+        <style>
+            body{
+                background-color: black;
+                background-image: url(bg/grunge1.png);
+                background-size: 100%;
+            }
+/*
+            .view {
+            }
+            */
+            @font-face {
+                font-family: bigboss;
+                src: url(./fonts/saucer-bb.regular.ttf);
+            }
+
+            @font-face{
+                font-family: engagement;
+                src: url(./fonts/engagement.ttf);
+            }
+            @font-face{
+                font-family: salutino;
+                src: url(./fonts/bdscript.ttf); 
+            }
+            .text {
+                font-size: 100px;
+                font-family: salutino;
+                color: white;
+            }
+            .verse-no {
+                color: red;
+            }
+            #main {
+                /* transform: translateY(50%); */
+                text-align: center;
+                 white-space:pre; 
+
+            }
+        </style>
+
+    </head>
+
+    <body ng-app="live" src="./fonts/FlexDisplay-Thin.otf" >
+        <div class="container-fluid" style="vertical-align:middle;">
+            <div class="row view">
+                
+                <!--<div class>
+                    <h1 style="font-family:bigboss; color:white; font-size:150px">GLORY BE TO JESUS</h1>
+                </div>-->
+
+                <div id="main" class="text">
+
+                </div>
+            </div>
+        </div>
+        
+    </body>
+</html>
+
+
+
+
+<script type="text/javascript"  src="http://localhost:7003/client.js"></script>
+<script type="text/javascript">
+    var client = new Faye.Client('http://localhost:7003/');
+    var i=0;
+    client.subscribe('/msg', function(data){
+
+        $("#main").html(data.displayText);
+
+    });
+
+
+</script>

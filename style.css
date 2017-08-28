@@ -1,0 +1,50 @@
+@charset "UTF-8";
+
+/*Title Bar*/
+.header{
+    
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
+        height: 3vh;
+    }
+
+/*Window Controls*/
+.panel-buttons {    
+    margin-top: -5px;
+    float:        left;
+}
+.panel-buttons button {    
+    font-size:18px;
+}
+.windowControls {
+    margin-top: -5px;
+    float:        right;
+}
+.header>ul{
+    text-align:   right;
+    line-height:  0;
+    padding-left: 6px;
+    }
+.header>ul>li,
+.header>ul>li>button{
+    display: inline-block;
+    }
+.header>ul{
+    float: right;
+    }
+.header>ul>li>button{
+    padding: 0px 7px;    
+    -webkit-transition: -webkit-transform 50ms;
+    -webkit-app-region: no-drag;
+    }
+.header>ul>li>button:hover,
+.header>ul>li>button:focus{
+    -webkit-transform:  scale(0.8,0.8);
+    outline:            none;
+    }
+
+/*Main window */
+#mainWindow {
+    height: 100%;
+    margin: 0px;
+} 

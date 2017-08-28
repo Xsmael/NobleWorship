@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html style="height:100%">
+   <head>
+      <meta charset='UTF-8'>
+      <link rel='stylesheet' href='reset.css'> 
+      <link rel='stylesheet' href='style.css'> 
+      <link rel="stylesheet" href="libs/css/jquery-ui.min.css"/> 
+      <link rel="stylesheet" href="libs/css/bootstrap.min.css"/>
+      <link rel="stylesheet" href="libs/css/lobipanel.min.css"/>
+      <link rel="stylesheet" href="libs/css/angular-ui-notification.min.css"/>
+
+      <!--<script src="node_modules/nw-dev/lib/dev.js"></script>-->
+
+      <script type="text/javascript"  src="http://localhost:7003/client.js"></script>
+      <script src="libs/js/jquery.1.11.min.js"></script>
+      <script src="libs/js/jquery-ui.min.js"></script>
+      <script src="libs/js/bootstrap.min.js"></script>
+      <script src="libs/js/bootbox.min.js"></script>
+      <script src="libs/js/lobipanel.js"></script>
+      <script src="js/screen-manager.js"></script>
+      <!--<script src="js/monitors.js"> </script>-->
+
+      <script src="libs/js/angular.js"></script>
+      <script src="libs/js/angular-ui-notification.min.js"></script>
+      <script src="libs/js/angular-faye.js"></script>
+      <script src="js/app.js"></script> 
+
+   </head>
+
+   <body style="height:100%; background-color:rgba(0,0,0,0);" ng-app="main">      
+      <!--Include these script files in the <head> or <body> tag-->
+
+
+        <div ng-controller="MainController" class=" panel-primary" style="background-color:rgba(0,0,0,0);"> 
+            <div class="panel-heading" style="-webkit-app-region: drag; padding: 2px 15px;">
+                <div class="panel-title header">
+                    <span class="window-title">Simple Worship</span>
+                        
+                    <ul class="panel-buttons">
+                        <li><button ng-click="loadPanel('bible-panel')" class="btn btn-default"><span class="glyphicon glyphicon-book"></span></button></li>
+                        <li><button ng-click="loadPanel('song-panel')" class="btn btn-default"><span class="glyphicon glyphicon-music"></span></button></li>
+                        <li><button ng-click="loadPanel('preview-panel')" class="btn btn-default"><span class="glyphicon glyphicon-th-list"></span></button></li>
+                            
+                    </ul>
+
+                    <ul class="windowControls pull-right">
+                        <li><button id="windowControlClose" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel-body" id="display-area" >
+                <div class="row">
+                    <div class="col-md-4">
+                        <div ng-include="showBiblePanel ? 'panels/bible.html': ''" ></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div ng-include="showSongPanel ? 'panels/song.html': ''" ></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div ng-include="showPreviewPanel ? 'panels/preview.html': ''" ></div>
+                    </div>
+                </div>
+
+
+            <!-- Body of the Main window-->
+                
+            <!-- End of Body of the Main window-->                
+            </div>
+        </div>
+    </body>
+</html>
+
+<script type="text/javascript">
+  var client = new Faye.Client('http://localhost:7003/');
+
+</script>
+
+<script src="live-reload.js"></script>

@@ -1,0 +1,35 @@
+<style>
+    #wrap { 
+        /*width: 600px; */
+         height: 320px;
+        padding: 0; overflow: hidden; }
+    #frame { width: 1920px; height: 1080px; border: 1px solid black; }
+    #frame {
+        -webkit-transform: scale(0.30);
+        -webkit-transform-origin: 0 0;
+    }
+</style>
+</style>
+<div id="bible-panel" ng-controller="PreviewPanelController" class="panel panel-default">
+    <div class="panel-heading">
+        <div class="panel-title">
+            <h4> {{pannelTitle}} </h4>
+        </div>
+    </div>
+    <div class="panel-body" style="vertical-align: middle;  text-align: center;">
+            <div id="wrap">
+                <iframe id="frame" src="../live.html" width="300" height="300" frameborder="0"></iframe>
+            </div>     
+    </div>
+</div>
+
+<script>
+
+     $('#bible-panel').lobiPanel({ 
+                    reload: false,
+                    expand: false,
+                    editTitle: false,
+                    minWidth:100,
+                    minHeight:100
+                });
+</script>

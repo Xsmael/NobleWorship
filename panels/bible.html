@@ -1,0 +1,94 @@
+<style>
+    .reading {
+        margin-top:5px;
+        overflow-y: scroll;
+        height: 200px;
+    }
+    .verse-ref {
+        margin-right: 10px;
+        float:right;
+        font-size:11px;
+        font-weight:bold;
+    }
+</style>
+
+
+<div id="bible-panel" ng-controller="BiblePanelController" class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <h4> {{pannelTitle}} </h4>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            
+                            <div class="input-group">
+                                <div class="input-group-btn"> 
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        KJV 
+                                        <span class="caret"></span>
+                                    </button> 
+                                    <ul class="dropdown-menu"> 
+                                        <li><a href="#" class="bible-version">LSG</a></li>
+                                        <li><a href="#" class="bible-version">KJV</a></li>
+                                        <li><a href="#" class="bible-version">RSV</a></li> 
+                                        
+                                    </ul> 
+                                </div>
+                                <input class="form-control"  id="verse" placeholder="Quick Bible Verse" list="bibles" ng-model="ref" ng-change="findVerse(ref)"> 
+                                <datalist id="bibles">
+                                    <option>Matthew</option>
+                                    <option>Mark</option>
+                                    <option>Luke</option>
+                                    <option>John</option>
+                                    <option>Acts</option>
+                                    <option>Romans</option>
+                                    <option>1 Corinthians</option>
+                                    <option>2 Corinthians</option>
+                                    <option>Galatians</option>
+                                    <option>Ephesians</option>
+                                    <option>Philippians</option>
+                                    <option>Colossians</option>
+                                    <option>1 Thessalonians</option>
+                                    <option>2 Thessalonians</option>
+                                    <option>1 Timothy</option>
+                                    <option>2 Timothy</option>
+                                    <option>Titus</option>
+                                    <option>Philemon</option>
+                                    <option>Hebrews</option>
+                                    <option>James</option>
+                                    <option>1 Peter</option>
+                                    <option>2 Peter</option>
+                                    <option>1 John</option>
+                                    <option>2 John</option>
+                                    <option>3 John</option>
+                                    <option>Jude</option>
+                                    <option>Revelation</option>
+                                </datalist>
+                            </div>
+
+                            <div class="reading">
+
+                                <div ng-repeat="v in verses">
+                                    <strong> {{v.verse}}.</strong> {{v.word}}
+                                </div>
+                                <br>
+                                <p class="verse-ref"> <em>{{verseRef}}</em></p> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+<script>
+    // $("#verse").change(function(newVal) {
+
+    //             ws.send(verse);                
+    // });
+     $('#bible-panel').lobiPanel({ 
+                    reload: false,
+                    expand: false,
+                    editTitle: false,
+                    minWidth:100,
+                    minHeight:100
+                });
+</script>
