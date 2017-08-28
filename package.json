@@ -1,6 +1,7 @@
 {
   "main": "index.html",
-  "name": "simpleWorship",
+  "name": "noble-worship",
+  "version": "0.0.1",
   "window": {
     "transparent": true,
     "toolbar": false,
@@ -12,6 +13,7 @@
     "line-reader": "^0.4.0",
     "mongodb": "^2.2.28",
     "mongoose": "^4.10.7",
+    "ngbootbox": "^0.2.0",
     "noogger": "^0.1.7",
     "scraperjs": "^1.2.0"
   }
