@@ -5,6 +5,7 @@
     
     -webkit-app-region: drag;
     -webkit-user-select: none;
+    user-select: none;
         height: 3vh;
     }
 
@@ -47,4 +48,11 @@
 #mainWindow {
     height: 100%;
     margin: 0px;
+} 
+
+
+/* Overwrites */
+
+.modal-dialog {
+    margin-top: 20% !important;
 } 

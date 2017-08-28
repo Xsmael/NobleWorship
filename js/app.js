@@ -80,7 +80,7 @@ function parseVerse(str) {
     }
 }
 
-angular.module("main", ['faye','ui-notification'])
+angular.module("main", ['faye','ui-notification','ngBootbox'])
     .config(function(NotificationProvider) {
             NotificationProvider.setOptions({
                 delay: 1000,
@@ -255,7 +255,6 @@ angular.module("main", ['faye','ui-notification'])
             //         });
             //     })
         }
-
         $scope.getSong = function (id) {
             Song.find({
                 _id: id
@@ -278,17 +277,17 @@ angular.module("main", ['faye','ui-notification'])
                 });       
             }
             
-            $scope.updateSong=   function(song) {
-                Song.findOneAndUpdate({title:song.title, author: song.author},editedSong, function (err, doc) {
-                    if (err)  Notification.error("Song not updated \nError: "+err);
-                    else{
-                         Notification.primary("Song created");
-                    }
-                });
+        $scope.updateSong=   function(song) {
+            Song.findOneAndUpdate({title:song.title, author: song.author},song, function (err, doc) {
+                if (err)  Notification.error("Song not updated \nError: "+err);
+                else{
+                        Notification.success("Song updated");
+                }
+            });
         }
 
         $scope.deleteSong=   function(song) {
-            Song.findOneAndRemove({title:song.title, author: song.author},editedSong, function (err, doc) {
+            Song.findOneAndRemove({title:song.title, author: song.author}, function (err, doc) {
                 if (err)  Notification.error("Song not deleted \nError: "+err);
                 else{
                      Notification.primary("Song deleted");

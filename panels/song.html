@@ -101,7 +101,9 @@ button.preview-tip span {
                     <span class="pull-right action-btn hidden-btn">    
                         <button ng-click="changeView('edit', s)" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>
                         <button ng-click="changeView('play', s)" class="btn btn-success"><span class="glyphicon glyphicon-play"></span></button>
-                        <button ng-click="deleteSong(s)" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>
+                        <button class="btn btn-danger" ng-bootbox-confirm="Are you sure you want to delete this?" ng-bootbox-confirm-action="deleteSong(s)">
+                            <span class="glyphicon glyphicon-trash">
+                        </button>
                     </span>
                 </a>
                 <!--Songs from web  API  -->
