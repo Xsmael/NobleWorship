@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var songWebAPI = require('lyrics-scraper');
+var bible = require('bible-parser');
 var log = require("noogger").init({
     fileOutput: true
 });
@@ -17,16 +18,15 @@ httpServer.listen(PORT);
 mongoose.connect('mongodb://127.0.0.1:27017/simpleWorship');
 
 var Schema = mongoose.Schema;
-var BibleVerse = mongoose.model('BibleVerse', new Schema({
+var BibleVerseSchema =  new Schema({
     testament: String,
     book: String,
     chapter: Number,
     verse: Number,
     word: String,
-    version: String,
     lang: String
 
-}));
+});
 
 var songSchema= new Schema({
     title: String,
@@ -80,10 +80,10 @@ function parseVerse(str) {
     }
 }
 
-angular.module("main", ['faye','ui-notification','ngBootbox'])
+angular.module("main", ['faye','ui-notification','ngBootbox','ng-fileDialog'])
     .config(function(NotificationProvider) {
             NotificationProvider.setOptions({
-                delay: 1000,
+                delay: 5000,
                 startTop: 20,
                 startRight: 10,
                 verticalSpacing: 20,
@@ -140,15 +140,73 @@ angular.module("main", ['faye','ui-notification','ngBootbox'])
         }
     })
 
-    .controller("BiblePanelController", function ($scope, $rootScope, FayeFactory) {
+    .controller("BiblePanelController", function ($scope, $rootScope, FayeFactory, Notification, FileDialog) {
         $scope.pannelTitle = "Bible";
         $scope.verse = "";
         $scope.verses = [];
-        FayeFactory.subscribe("/msg", function (data) {
-            $scope.verse = data;
-            console.log(data);
+        $scope.bibles = [];
+        $scope.currentBible;
+        $scope.view = {};
+        
+        /** get the installed bibles */
+        mongoose.connection.db.listCollections().toArray(function (err, names) {
+            if (err) {
+              console.log(err);
+            } else {
+              names.forEach(function(collection) {
+                  if( /\w+__\w+__\w+__bible.+/.exec(collection.name)) {
+                      console.log(collection.name);
+                      var info= collection.name.split('__');
+                      var bible= {
+                          abbrVersion: info[0],
+                          version: info[1].replace(/_/g,' '),
+                          lang: info[2]
+                      }
+                      $scope.bibles.push(bible);
+                    var model= info[0]+'__'+info[1]+'__'+info[2]+'__bible';                    
+                    $scope.currentBible=  mongoose.model(model,BibleVerseSchema);  
+                    $scope.currentBibleVersion=info[0];
+                }
+              });
+            }
         });
 
+        $scope.changeBibleVersion = function (abbrVersion) {
+            $scope.currentBibleVersion=abbrVersion;
+            $scope.bibles.forEach(function(b) {
+                if(b.abbrVersion== abbrVersion) {
+                    var model= b.abbrVersion+'__'+b.version.replace(/ /g,'_')+'__'+b.lang+'__bible';
+                    $scope.currentBible=  mongoose.model(model,BibleVerseSchema);  
+                    console.log( $scope.verseRef );
+
+                    if( $scope.verseRef )  { $scope.findVerse( $scope.verseRef );}
+                }
+            }, this);
+            
+        }
+    
+        $scope.changeView= function(action, song) {
+            toggleView(action);
+
+            switch(action) {
+                case 'read':
+                    // anything here
+                break;
+
+                case 'manage':
+                // anything here
+                break;
+            }
+
+            function toggleView( v ) {
+                for (var view in  $scope.view) {
+                    if ( $scope.view.hasOwnProperty(view)) {
+                      $scope.view[view]= false;
+                    }
+                }
+                $scope.view[v]= true;
+            }
+        }
 
         $scope.findVerse = function (ref) {
 
@@ -164,15 +222,13 @@ angular.module("main", ['faye','ui-notification','ngBootbox'])
                 }
                 if (!verse.verse1) delete query.verse;
 
-
-                console.log(verse);
-
-                BibleVerse.find(query, function (err, verses) {
+                $scope.currentBible.find(query, function (err, verses) {
                     if (err) console.err(err);
                     else console.info(verses);
 
                     $scope.verses = verses;
                     $scope.verseRef = ref;
+                    $scope.$apply();
 
                     var read = "";
                     $scope.verses.forEach(function (v) {
@@ -189,24 +245,33 @@ angular.module("main", ['faye','ui-notification','ngBootbox'])
 
 
         }
+        
+        $scope.addBible= function () {
+            $scope.addBibleCount=0;
+            FileDialog.selectFile(function (file) {
+                if(file) {
+                    var path= file.path.replace(/\\/g,'/');
+                    var bibleInfo= bible.getInfo(path);
+                    console.log(bibleInfo);
 
-        $scope.sendMsg = function () {
-
-            var data = {
-                text: $scope.chatmessage,
-                awaits: isQuestion($scope.chatmessage),
-                time: Date.now()
-            }
-
-            FayeFactory.publish($rootScope.channel, data);
-            $scope.chatmessage = "";
-        }
+                    var modelName= bibleInfo.abbrVersion+'__'+bibleInfo.version.replace(/ /g,'_').replace(/\d|\W/g,'')+'__'+bibleInfo.lang+'__bible';
+                    var newBibleVersion=  mongoose.model(modelName,BibleVerseSchema);  
+                    bible.parse(path, "GETBIBLE.NET", function (verse, done) {
+                        newBibleVersion.create(verse, function(err, obj){
+                        });                         
+                        $scope.addBibleCount++;
+                        if(done) Notification.success(bibleInfo.version+" bible has been loaded successfully!");
+                    });
+                }
+            });
+        };
 
     })
     .controller("SongPanelController", function ($scope, $rootScope, FayeFactory, Notification) {
         $scope.pannelTitle = "Song book";
         $scope.songList= [];
-        $scope.browse= true;
+        $scope.view= {};
+        $scope.view.browse= true;
 
         $scope.changeView= function(action, song) {
             toggleView(action);
@@ -225,14 +290,13 @@ angular.module("main", ['faye','ui-notification','ngBootbox'])
                 break;
             }
 
-            function toggleView( view ) {
-                
-                $scope.browse= $scope.new= $scope.edit= $scope.play= false;
-                $scope[view]= true;
-
-                console.log("browse: "+ $scope['browse']);
-                console.log("new: "+ $scope.new);
-                console.log("play: "+ $scope.play);
+            function toggleView( v ) {
+                for (var view in  $scope.view) {
+                    if ( $scope.view.hasOwnProperty(view)) {
+                      $scope.view[view]= false;
+                    }
+                }
+                $scope.view[v]= true;
             }
         }
         $scope.findSong= function(keywords) {
@@ -249,11 +313,11 @@ angular.module("main", ['faye','ui-notification','ngBootbox'])
                     $scope.songList = songs;      
                 });
             });
-            // songWebAPI.query(keywords, function(result) {
-            //         $scope.$apply(function () {
-            //             $scope.songsFromWeb= result;  
-            //         });
-            //     })
+            songWebAPI.query(keywords, function(result) {
+                    $scope.$apply(function () {
+                        $scope.songsFromWeb= result;  
+                    });
+                })
         }
         $scope.getSong = function (id) {
             Song.find({
@@ -270,6 +334,7 @@ angular.module("main", ['faye','ui-notification','ngBootbox'])
                     if (err)  Notification.error("Song not created \nError: "+err);
                     else{
                          Notification.success("Song created");
+                         refreshSongList();
                          song.title= "";
                          song.author= "";
                          song.lyrics= ""; 
@@ -278,29 +343,16 @@ angular.module("main", ['faye','ui-notification','ngBootbox'])
             }
             
         $scope.updateSong=   function(song) {
+            song.verses= song.lyrics.split(/\n\n+/);
             Song.findOneAndUpdate({title:song.title, author: song.author},song, function (err, doc) {
                 if (err)  Notification.error("Song not updated \nError: "+err);
                 else{
-                        Notification.success("Song updated");
+                        Notification.success("Song updated\n:)");
+                        refreshSongList();
                 }
             });
         }
-
-        $scope.deleteSong=   function(song) {
-            Song.findOneAndRemove({title:song.title, author: song.author}, function (err, doc) {
-                if (err)  Notification.error("Song not deleted \nError: "+err);
-                else{
-                     Notification.primary("Song deleted");
-                }
-            });
-        }
-
-
-
-        function detectLang(txt) {
-            return "EN";
-        }
-
+        
         $scope.addSong = function (title, author, link) {
             console.log(title+" "+author+" "+link)
             songWebAPI.getLyrics(link, function (lyrics) {
@@ -312,7 +364,10 @@ angular.module("main", ['faye','ui-notification','ngBootbox'])
                 }
                 Song.create(songObj, function (err, res) {
                     if (err) log.error("add song error");
-                    else Notification.success("Song added");
+                    else {
+                        Notification.success("Song added");
+                        refreshSongList();
+                    }
                 });      
             });
         }
@@ -324,6 +379,25 @@ angular.module("main", ['faye','ui-notification','ngBootbox'])
                 })                
             });
         }
+        $scope.deleteSong=   function(song) {
+            Song.findOneAndRemove({title:song.title, author: song.author}, function (err, doc) {
+                if (err)  Notification.error("Song not deleted \nError: "+err);
+                else{
+                     Notification.primary("Song deleted");
+                     refreshSongList();
+                }
+            });
+        }
+        function refreshSongList() {
+            $scope.findSong($scope.keyword || "");
+        }
+
+
+
+        function detectLang(txt) {
+            return "EN";
+        }
+
 
         $scope.displaySongVerse = function (v) {
             FayeFactory.publish("/msg", {

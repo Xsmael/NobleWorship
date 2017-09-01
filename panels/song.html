@@ -9,14 +9,6 @@
         display: inline;
     }
 
-    .toolbar {
-        margin-top: -16px;
-        margin-bottom: 20px;
-    }
-    .toolbar button { 
-        border-top-right-radius: 0px;
-        border-top-left-radius: 0px;
-    }
     textarea {
         height: 200vh;
         width: 100%;
@@ -74,6 +66,11 @@ button.preview-tip span {
   z-index: 999;
 }
 
+#song-list {
+    max-height: 50hv;
+    overflow-y: auto;
+}
+
 </style>
 
 
@@ -90,7 +87,7 @@ button.preview-tip span {
              <button ng-click="changeView('browse')"  class="btn btn-default"> Browse</button>
         </div>
         
-        <div  ng-if="browse" class="browse-songs">
+        <div  ng-if="view.browse" class="browse-songs">
             <input type="text" class="form-control" placeholder="Search" ng-model="keyword" ng-change="findSong(keyword)">
             <br>
             <div class="list-group" id="song-list">
@@ -118,7 +115,7 @@ button.preview-tip span {
             </div>
             
         </div>
-        <div ng-if="play">
+        <div ng-if="view.play">
 
             <div class="list-group" id="song-list">
                 <a type="button" class="list-group-item hidden-btn-parent center" ng-class="active-verse" ng-dblclick="displaySongVerse(v)"  ng-repeat="v in currentSong.verses track by $index ">
@@ -129,13 +126,13 @@ button.preview-tip span {
                 </a>                    
             </div>
         </div>
-        <div ng-if="edit">
-            <input type="text" class="form-control" ng-model="editedSong.title"><br>     
-            <input type="text" class="form-control" ng-model="editedSong.author"><br>             
+        <div ng-if="view.edit">
+            <input type="text" class="form-control" ng-model="editedSong.title"><br>
+            <input type="text" class="form-control" ng-model="editedSong.author"><br>
             <textarea type="text" rows="20" class="form-control center" ng-model="editedSong.lyrics" > </textarea>
             <button ng-click="updateSong(editedSong)"  class="btn btn-success btn-block"> Save </button>                
         </div>
-        <div ng-if="new" ng-init="disabled=true">
+        <div ng-if="view.new" ng-init="disabled=true">
             <input type="text" class="form-control" placeholder="Title" ng-model="newSong.title"><br>     
             <input type="text" class="form-control" placeholder="Author" ng-model="newSong.author"><br>             
             <textarea type="text" rows="20" class="form-control center" placeholder="Lyrics..." ng-model="newSong.lyrics" > </textarea>

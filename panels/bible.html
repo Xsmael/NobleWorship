@@ -1,94 +1,124 @@
 <style>
     .reading {
-        margin-top:5px;
+        margin-top: 5px;
         overflow-y: scroll;
         height: 200px;
     }
+
     .verse-ref {
         margin-right: 10px;
-        float:right;
-        font-size:11px;
-        font-weight:bold;
+        float: right;
+        font-size: 11px;
     }
 </style>
 
 
 <div id="bible-panel" ng-controller="BiblePanelController" class="panel panel-default">
-                    <div class="panel-heading">
-                        <div class="panel-title">
-                            <h4> {{pannelTitle}} </h4>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <div class="form-group">
-                            
-                            <div class="input-group">
-                                <div class="input-group-btn"> 
-                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        KJV 
-                                        <span class="caret"></span>
-                                    </button> 
-                                    <ul class="dropdown-menu"> 
-                                        <li><a href="#" class="bible-version">LSG</a></li>
-                                        <li><a href="#" class="bible-version">KJV</a></li>
-                                        <li><a href="#" class="bible-version">RSV</a></li> 
-                                        
-                                    </ul> 
-                                </div>
-                                <input class="form-control"  id="verse" placeholder="Quick Bible Verse" list="bibles" ng-model="ref" ng-change="findVerse(ref)"> 
-                                <datalist id="bibles">
-                                    <option>Matthew</option>
-                                    <option>Mark</option>
-                                    <option>Luke</option>
-                                    <option>John</option>
-                                    <option>Acts</option>
-                                    <option>Romans</option>
-                                    <option>1 Corinthians</option>
-                                    <option>2 Corinthians</option>
-                                    <option>Galatians</option>
-                                    <option>Ephesians</option>
-                                    <option>Philippians</option>
-                                    <option>Colossians</option>
-                                    <option>1 Thessalonians</option>
-                                    <option>2 Thessalonians</option>
-                                    <option>1 Timothy</option>
-                                    <option>2 Timothy</option>
-                                    <option>Titus</option>
-                                    <option>Philemon</option>
-                                    <option>Hebrews</option>
-                                    <option>James</option>
-                                    <option>1 Peter</option>
-                                    <option>2 Peter</option>
-                                    <option>1 John</option>
-                                    <option>2 John</option>
-                                    <option>3 John</option>
-                                    <option>Jude</option>
-                                    <option>Revelation</option>
-                                </datalist>
-                            </div>
+    <div class="panel-heading">
+        <div class="panel-title">
+            <h4> {{pannelTitle}} </h4>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="toolbar">
+            <button ng-click="changeView('read')" class="btn btn-default">read</button>
+            <button ng-click="changeView('manage')" class="btn btn-default">manage</button>
+        </div>
+        <div ng-if="view.read">
+            <div class="form-group">
 
-                            <div class="reading">
-
-                                <div ng-repeat="v in verses">
-                                    <strong> {{v.verse}}.</strong> {{v.word}}
-                                </div>
-                                <br>
-                                <p class="verse-ref"> <em>{{verseRef}}</em></p> 
-                            </div>
-                        </div>
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              {{currentBibleVersion}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="bible in bibles">
+                                <a href="#" class="bible-version" ng-click="changeBibleVersion(bible.abbrVersion)">{{bible.abbrVersion}}</a>
+                            </li>
+                        </ul>
                     </div>
+                    <input class="form-control" id="verse" placeholder="Quick Bible Verse" list="bibles" ng-model="ref" ng-change="findVerse(ref)">
+                    <datalist id="bibles">
+                        <option>Matthew</option>
+                        <option>Mark</option>
+                        <option>Luke</option>
+                        <option>John</option>
+                        <option>Acts</option>
+                        <option>Romans</option>
+                        <option>1 Corinthians</option>
+                        <option>2 Corinthians</option>
+                        <option>Galatians</option>
+                        <option>Ephesians</option>
+                        <option>Philippians</option>
+                        <option>Colossians</option>
+                        <option>1 Thessalonians</option>
+                        <option>2 Thessalonians</option>
+                        <option>1 Timothy</option>
+                        <option>2 Timothy</option>
+                        <option>Titus</option>
+                        <option>Philemon</option>
+                        <option>Hebrews</option>
+                        <option>James</option>
+                        <option>1 Peter</option>
+                        <option>2 Peter</option>
+                        <option>1 John</option>
+                        <option>2 John</option>
+                        <option>3 John</option>
+                        <option>Jude</option>
+                        <option>Revelation</option>
+                    </datalist>
                 </div>
+
+                <div class="reading">
+
+                    <div ng-repeat="v in verses">
+                        <strong> {{v.verse}}.</strong> {{v.word}}
+                    </div>
+                    <br>
+                </div>
+                <p class="verse-ref"> 
+                    <strong><em>{{verseRef }} </em> </strong>  [{{currentBibleVersion}}]
+                </p>
+            </div>
+        </div>
+        <div ng-if="view.manage">
+            
+        
+            <table class="table table-condensed table-hover table-striped">
+                <caption> Installed Bibles </caption>
+                <thead>
+                    <td>
+                        <tr ng-repeat="bible in bibles">
+                            <td> {{ bible.version  }} [{{ bible.abbrVersion }}] </td>
+                            <td> <strong>{{ bible.lang}}</strong> </td>
+                            <td>
+                                <button class="btn btn-danger" ng-bootbox-confirm="Are you sure you want to delete this?" ng-bootbox-confirm-action="removeBible(bible)">
+                                    <span class="glyphicon glyphicon-trash">
+                                </button>
+                            </td>
+                        </tr>
+                    </td>
+                </thead>
+            </table>
+            <button ng-click="addBible()"  class="btn btn-success btn-block"> <span class="glyphicon glyphicon-plus"> </button>                
+            
+        </div>
+
+    </div>
+</div>
 
 <script>
     // $("#verse").change(function(newVal) {
 
     //             ws.send(verse);                
     // });
-     $('#bible-panel').lobiPanel({ 
-                    reload: false,
-                    expand: false,
-                    editTitle: false,
-                    minWidth:100,
-                    minHeight:100
-                });
+    $('#bible-panel').lobiPanel({
+        reload: false,
+        expand: false,
+        editTitle: false,
+        minWidth: 100,
+        minHeight: 100
+    });
 </script>

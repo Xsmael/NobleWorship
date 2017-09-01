@@ -9,6 +9,18 @@
         height: 3vh;
     }
 
+
+/* For pannels*/
+
+.toolbar {
+    margin-top: -16px;
+    margin-bottom: 20px;
+}
+.toolbar button { 
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+}
+
 /*Window Controls*/
 .panel-buttons {    
     margin-top: -5px;

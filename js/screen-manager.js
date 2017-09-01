@@ -1,7 +1,7 @@
     var GUI = require('nw.gui');
     var WIN = GUI.Window.get();
     WIN.maximize();
-
+    
     $(function() {
         nw.Screen.Init();
 

@@ -130,5 +130,3 @@ function addBible(filename, format)
 }
 
 addBible('../bibles/French__Darby__darby__LTR.txt','GETBIBLE.NET');
-
-exports.addBible= addBible;
